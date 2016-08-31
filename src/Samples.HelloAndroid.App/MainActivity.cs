@@ -8,11 +8,9 @@ using Android.OS;
 
 namespace Samples.HelloAndroid.App
 {
-    [Activity(Label = "Samples.HelloAndroid.App", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "Phone Word", MainLauncher = true)]
     public class MainActivity : Activity
     {
-        int count = 1;
-
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -20,11 +18,47 @@ namespace Samples.HelloAndroid.App
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            // Get our button from the layout resource,
-            // and attach an event to it
-            ////Button button = FindViewById<Button>(Resource.Id.MyButton);
+            // get UI controls
+            var phoneNumberText = FindViewById<EditText>(Resource.Id.PhoneNumberText);
+            var translateButton = FindViewById<Button>(Resource.Id.TranslateButton);
+            var callButton = FindViewById<Button>(Resource.Id.CallButton);
 
-            ///button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
+            // disable call button
+            callButton.Enabled = false;
+
+            var translatedNumber = string.Empty;
+
+            translateButton.Click += (s, e) =>
+            {
+                // translate user's alphanumeric phone number to numeric
+                translatedNumber = PhonewordTranslator.ToNumber(phoneNumberText.Text);
+
+                if (string.IsNullOrWhiteSpace(translatedNumber))
+                {
+                    callButton.Text = "Call";
+                    callButton.Enabled = false;
+                }
+                else
+                {
+
+                    callButton.Text = "Call {translatedNumber}";
+                    callButton.Enabled = true;
+                }
+            };
+
+            callButton.Click += (s, e) =>
+            {
+                var callDialog = new AlertDialog.Builder(this);
+                callDialog.SetMessage("Call {translatedNumber}?");
+                callDialog.SetNeutralButton("Call", delegate
+                {
+                    var callIntent = new Intent(Intent.ActionCall);
+                    callIntent.SetData(Android.Net.Uri.Parse("tel:" + translatedNumber));
+                    StartActivity(callIntent);
+                });
+
+                callDialog.Show();
+            };
         }
     }
 }
