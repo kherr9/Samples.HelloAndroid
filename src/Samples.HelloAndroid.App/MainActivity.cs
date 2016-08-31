@@ -1,8 +1,6 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using Android.OS;
 
@@ -41,7 +39,7 @@ namespace Samples.HelloAndroid.App
                 else
                 {
 
-                    callButton.Text = "Call {translatedNumber}";
+                    callButton.Text = "Call " + translatedNumber;
                     callButton.Enabled = true;
                 }
             };
@@ -49,7 +47,7 @@ namespace Samples.HelloAndroid.App
             callButton.Click += (s, e) =>
             {
                 var callDialog = new AlertDialog.Builder(this);
-                callDialog.SetMessage("Call {translatedNumber}?");
+                callDialog.SetMessage("Call " + translatedNumber + "?");
                 callDialog.SetNeutralButton("Call", delegate
                 {
                     var callIntent = new Intent(Intent.ActionCall);
